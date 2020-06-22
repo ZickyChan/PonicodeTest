@@ -14,7 +14,7 @@ function readFile(fileName): Input {
         turns: 0,
         numberOfGroups: 0,
         queues: []
-    }
+    };
 
     let isInitialize = true;
     data.split('\n').forEach((line) => {
@@ -58,13 +58,7 @@ function compute(queue: number[], size: number, turns: number): number {
             onboardGroup = queue.shift(); // Pop a new value from the front
         }
 
-        console.log('aaaaaaaa');
-        console.log(sequenceStorage);
-        console.log(queue);
-
-
         o = sequenceStorage.indexOf(queue.toString()); // Check for Cycle offset
-        console.log(o);
         sequenceStorage.push(queue.toString()); // Remember current sequence
 
         groupValue.push(sum); // Found a new group
