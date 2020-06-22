@@ -37,7 +37,6 @@ function readFile(fileName): Input {
 }
 
 function compute(queue: number[], size: number, turns: number): number {
-    console.log('Calculating result');
     let groupValue = [];
     let sequenceStorage = [queue.toString()];
     let onboardGroup = queue.shift();
@@ -67,25 +66,36 @@ function compute(queue: number[], size: number, turns: number): number {
 
     // Sum up the first elements occuring just once
     for (let i = 0; i < o; i++) {
-        res+= groupValue[i];
+        res+= groupValue.shift();
+        turns--;
     }
 
-    // Calculate the rest, which doesn't fit into a group
-    let r = (turns - o) % (groupValue.length - o);
+    let remaining = turns % groupValue.length;
 
-    // Run over the other groups
-    for (let i = 0; i < groupValue.length; i++) {
-
-        // Group value times the number of occurences plus the rest
-        res+= groupValue[i] * (Math.floor((turns - o) / (groupValue.length - o)) + (r > 0 ? 1 : 0));
-        r--; // Reduce rest
+    let index = 0;
+    while (remaining > 0) {
+        res += groupValue[index];
+        index++;
+        remaining--;
+        turns--;
     }
+
+    const sumGroup = groupValue.reduce((acc, value) => {
+        return acc + value;
+    });
+
+    res += sumGroup*(turns/groupValue.length);
+
     return res;
 }
 
 
 if (!module.parent) {
-    const data: Input = readFile('roller_coaster.hard');
+    const dataHard: Input = readFile('roller_coaster.hard');
 
-    console.log('Result: ', compute(data.queues, data.size, data.turns));
+    console.log('Result hard: ', compute(dataHard.queues, dataHard.size, dataHard.turns));
+
+    const dataHarder: Input = readFile('roller_coaster.harder');
+
+    console.log('Result harder: ', compute(dataHarder.queues, dataHarder.size, dataHarder.turns));
 }

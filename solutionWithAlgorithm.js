@@ -27,7 +27,6 @@ function readFile(fileName) {
     return result;
 }
 function compute(queue, size, turns) {
-    console.log('Calculating result');
     var groupValue = [];
     var sequenceStorage = [queue.toString()];
     var onboardGroup = queue.shift();
@@ -42,30 +41,33 @@ function compute(queue, size, turns) {
             sum += onboardGroup; // Sum for group
             onboardGroup = queue.shift(); // Pop a new value from the front
         }
-        console.log('aaaaaaaa');
-        console.log(sequenceStorage);
-        console.log(queue);
         o = sequenceStorage.indexOf(queue.toString()); // Check for Cycle offset
-        console.log(o);
         sequenceStorage.push(queue.toString()); // Remember current sequence
         groupValue.push(sum); // Found a new group
     } while (o === -1); // Loop until we get a cycle
     // Sum up the first elements occuring just once
     for (var i = 0; i < o; i++) {
-        res += groupValue[i];
+        res += groupValue.shift();
+        turns--;
     }
-    // Calculate the rest, which doesn't fit into a group
-    var r = (turns - o) % (groupValue.length - o);
-    // Run over the other groups
-    for (var i = 0; i < groupValue.length; i++) {
-        // Group value times the number of occurences plus the rest
-        res += groupValue[i] * (Math.floor((turns - o) / (groupValue.length - o)) + (r > 0 ? 1 : 0));
-        r--; // Reduce rest
+    var remaining = turns % groupValue.length;
+    var index = 0;
+    while (remaining > 0) {
+        res += groupValue[index];
+        index++;
+        remaining--;
+        turns--;
     }
+    var sumGroup = groupValue.reduce(function (acc, value) {
+        return acc + value;
+    });
+    res += sumGroup * (turns / groupValue.length);
     return res;
 }
 if (!module.parent) {
-    var data = readFile('roller_coaster.hard');
-    console.log('Result: ', compute(data.queues, data.size, data.turns));
+    var dataHard = readFile('roller_coaster.hard');
+    console.log('Result hard: ', compute(dataHard.queues, dataHard.size, dataHard.turns));
+    var dataHarder = readFile('roller_coaster.harder');
+    console.log('Result harder: ', compute(dataHarder.queues, dataHarder.size, dataHarder.turns));
 }
 //# sourceMappingURL=solutionWithAlgorithm.js.map
